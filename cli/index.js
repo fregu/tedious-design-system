@@ -1,0 +1,10 @@
+/**
+  bin/init
+  bin/start
+  bin/create
+  bin/serve
+  bin/bump
+  bin/eject
+  bin/inject
+  bin/deploy
+**/

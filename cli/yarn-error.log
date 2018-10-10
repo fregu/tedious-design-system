@@ -1,0 +1,44 @@
+Arguments: 
+  /usr/local/bin/node /usr/local/Cellar/yarn/1.1.0/libexec/bin/yarn.js add @tds/parser
+
+PATH: 
+  /Users/fredrik/Library/Python/3.6/bin:/usr/local/git/bin:/sw/bin/:/usr/local/bin:/usr/local/:/usr/local/sbin:/usr/local/mysql/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Library/Frameworks/Mono.framework/Versions/Current/Commands:/Users/fredrik/git-commands/:/usr/local/bin/:/usr/local/mysql/bin
+
+Yarn version: 
+  1.1.0
+
+Node version: 
+  8.12.0
+
+Platform: 
+  darwin x64
+
+npm manifest: 
+  {
+    "name": "@tds/cli",
+    "version": "1.0.0",
+    "main": "index.js",
+    "bin": {
+      "tds": "bin/index.js"
+    },
+    "license": "MIT"
+  }
+
+yarn manifest: 
+  No manifest
+
+Lockfile: 
+  No lockfile
+
+Trace: 
+  Error: https://registry.yarnpkg.com/@tds%2fparser: Not found
+      at Request.params.callback [as _callback] (/usr/local/Cellar/yarn/1.1.0/libexec/lib/cli.js:61779:18)
+      at Request.self.callback (/usr/local/Cellar/yarn/1.1.0/libexec/lib/cli.js:121917:22)
+      at emitTwo (events.js:126:13)
+      at Request.emit (events.js:214:7)
+      at Request.<anonymous> (/usr/local/Cellar/yarn/1.1.0/libexec/lib/cli.js:122900:10)
+      at emitOne (events.js:116:13)
+      at Request.emit (events.js:211:7)
+      at IncomingMessage.<anonymous> (/usr/local/Cellar/yarn/1.1.0/libexec/lib/cli.js:122820:12)
+      at Object.onceWrapper (events.js:313:30)
+      at emitNone (events.js:111:20)

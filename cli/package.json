@@ -1,0 +1,9 @@
+{
+  "name": "@tds/cli",
+  "version": "1.0.0",
+  "main": "index.js",
+  "bin": {
+    "tds": "bin/index.js"
+  },
+  "license": "MIT"
+}
