@@ -18,47 +18,52 @@ app.use(App.ssr())
 
 **/
 const Koa = require('koa')
-const https = require('https')
+// const https = require('https')
 const cors = require('koa-cors')
-const apolloServer = require('koa-apollo-server')
 const websockify = require('koa-websocket')
+// const apolloServer = require('koa-apollo-server')
 
-const api = require('@tds/api')
-const styleguide = require('@tds/styleguide')
-const cms = require('@tds/cms')
-const provider = require('@tds/provider')
-const ssr = require('@tds/app')
+// const graphql = require('@tds/graphql')
+// const api = require('@tds/api')
+// const styleguide = require('@tds/styleguide')
+// const cms = require('@tds/cms')
+// const provider = require('@tds/provider')
+// const ssr = require('@tds/app')
 
 const webpack = require('webpack')
-const webpackDevMiddleware = require('webpack-dev-middleware')
+const webpackDevMiddleware = require('koa-webpack-dev-middleware')
+const historyFallback = require('koa2-history-api-fallback')
 
 module.exports = function server(config) {
+  console.log('server', config)
+  //const app = new Koa();
   const app = websockify(new Koa());
   app.use(cors())
-
-  const compiler = webpack.compile(config.webpack)
+  app.use(historyFallback())
+  const compiler = webpack([config.webpack])
 
   // trigger webpack build on each startup
 
-  app.ws.use(api.socketHandler)
+  //app.ws.use(api.socketHandler)
 
-  if (config.enableGraphql && config.graphql.schema) {
-    app.use(config.graphqlEndpoint || '/graphql', apolloServer(config.graphql.schema))
-  }
+  // if (config.enableGraphql && config.graphql.schema) {
+  //   app.use(config.graphqlEndpoint || '/graphql', apolloServer(config.graphql.schema))
+  // }
 
-  if (config.mode === 'development') {
+  //if (config.mode === 'development') {
     app.use(webpackDevMiddleware(compiler))
-  }
+    app.use(require("koa-webpack-hot-middleware")(compiler));
+  //}
 
-  app.use('/api', api(config))
-  app.use('/styleguide', styleguide(config))
-  app.use(provider.server(app.server))
+  // app.use('/api', api(config))
+  // app.use('/styleguide', styleguide(config))
+  // app.use(provider.server(app.server))
 
+  //
+  // if (config.enableSSL && config.mode === 'development') {
+  //   const server = https(app)
+  //   server.listen(config.env.sslPort || 1001)
+  // }
 
-  if (config.enableSSL && config.mode === 'development') {
-    const server = https(app)
-    server.listen(config.env.sslPort || 1001)
-  }
-
-  app.listen(config.env.port || 1000)
+  app.listen(config.env && config.env.port || 1000)
 }

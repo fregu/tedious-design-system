@@ -6,6 +6,9 @@
 const fs = require('fs')
 const parseTree = require('directory-tree')
 const ignoreFiles = ['dist', 'node_modules']
+const dotenv = require('dotenv')
+dotenv.config()
+
 const watchFiles = [
   {
     type: 'file',
@@ -71,11 +74,33 @@ const watchFiles = [
       config.paths.plates = item.path
       config.src.plates = [...(config.src.plates||[]), ...parseComponents(item.children, config)]
     }
+  },
+  {
+    type: 'directory',
+    test: /^store$/i,
+    resolve(item, config) {
+      const reducers = item.children.find(subItem => subItem.name === 'reducers')
+      const middlewares = item.children.find(subItem => subItem.name === 'middlewares')
+      config.store = {
+        reducers: (reducers && reducers.children && parseScripts(reducers.children, config)) || (reducers && reducers.type === 'file' && [reducers.path]) || [],
+        middlewares: (middlewares && middlewares.children && parseScripts(middlewares.children, config)) || (middlewares && middlewares.type === 'file' && [middlewares.path]) || [],
+      }
+    }
   }
 ]
 
-const defaultConfig = { src: {}, paths: {}}
+const defaultConfig = { mode: process.env.NODE_ENV || 'development', src: {}, paths: {}, env: {port: 5555, ...(process.env || {})}}
 
+function parseScripts(items, config) {
+  return items.reduce((scripts, item) => {
+    if (item.children) {
+      return [...scripts, ...parseScripts(item.children)]
+    } else if (item.type === 'file' && item.name.match(/\.m?jsx?$/)) {
+      return [...scripts, item.path]
+    }
+    return scripts
+  }, [])
+}
 function parseComponents(components = [], config) {
   return components.map((item) => {
     if (item.children) {

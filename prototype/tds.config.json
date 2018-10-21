@@ -1,4 +1,7 @@
 {
   "title": "Prototype project",
-  "description": "Just playing around"
+  "description": "Just playing around",
+  "graphql": {
+    "endpoint": "https://api-euwest.graphcms.com/v1/cjng2h1rr1aha01ijg503fnjj/master"
+  }
 }

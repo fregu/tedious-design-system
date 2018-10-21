@@ -1,0 +1,8 @@
+.Counter {
+  font-size: 4em;
+  width: 100px;
+  text-align: center;
+  color: blue;
+  cursor: pointer;
+  user-select: none;
+}
