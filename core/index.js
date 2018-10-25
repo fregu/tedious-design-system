@@ -11,7 +11,7 @@ server.config({
 **/
 const parser = require('@tds/parser')
 const build = require('@tds/build')
-// const server = require('@tds/server')
+const server = require('@tds/server')
 
 // const git = require('@tds/git')
 
@@ -33,9 +33,17 @@ module.exports = function core(dir) {
       build(config).build()
       console.log('build tds');
     },
-    server() {
+    devServer() {
       build(config).devServer()
       console.log('Starting dev server');
+    },
+    server() {
+      server(build(config).config())
+      console.log('Starting server');
+    },
+    start() {
+      server(config)
+      console.log('Starting tds server');
     }
   }
 }

@@ -22,6 +22,10 @@ if (process.argv.length > 2) {
       tds.build()
       break;
 
+    case 'dev-server':
+      tds.devServer()
+      break;
+
     case 'server':
       tds.server()
       break;

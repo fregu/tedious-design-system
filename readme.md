@@ -88,8 +88,26 @@ Screw drivers and superglue
 ### Plates
 Layout templates for foundation
 
+## Contribute
+npm link modules
+```
+$ cd core && npm link && cd ..
+$ cd build && npm link && cd ..
+$ cd store && npm link && cd ..
+$ cd server && npm link && cd ..
+$ cd parser && npm link && cd ..
+```
+
+link dependencies
+```
+$ cd core && npm link @tds/parser && npm link @tds/server && npm link @tds/build && cd ..
+$ cd build && npm link @tds/store && cd ..
+$ cd server && npm link @tds/build && cd ..
+```
+
 ## Getting started
 
+```
 $ tds init
   Name of application:
   Framework: [React, Vue, Angular, Polymer]
@@ -101,8 +119,9 @@ $ tds init
   setting up your design system ........ done
   creating remote repository .... done
   deploy application running `git push production master` or `tds deploy`
+```
 
-
+```
 $ tds start
   Building assets .... done
   Building styles .... done
@@ -114,10 +133,10 @@ $ tds start
   Server running on http://localhost:1234 or https://localhost:1234
   GraphQl server running on http://localhost:1234/graphql or https://localhost:1234/graphql
   Styleguide running on http://localhost:1234/styleguide or https://localhost:1234/styleguide
+```
 
----
 
-
+```
 $ tds build
   Building assets .... done
   Building styles .... done
@@ -125,25 +144,27 @@ $ tds build
   Generating icons .... done
   Creating manifest .... done
   Adding service worker .... done
+```
 
-
+```
 $ tds deploy
   git push production <currentBranch>:master
+```
 
-
+```
 $ tds eject
   Creating webpack configuration .... done
   Creating babel configuration .... done
   Creating postCSS configuration .... done
   Updating lds.config.js
+```
+Build will use webpack.config.js for future bundles
 
-  Build will use webpack.config.js for future bundles
-
-
+```
 $ tds inject
   Updating lds.config.js
-
-  Build will use predefined config for future bundles
+```
+Build will use predefined config for future bundles
 
 
 
@@ -175,9 +196,29 @@ koa, @tds/build, graphql, api, ssl, ws, static
 - setup REST api enpoints
 - serve static assets
 
+@tds/db
+Setup a mongoDB client, with users, assets and collections.
+
+@tds/api
+An API with REST endpoints to control database
+
+@tds/graphql
+GraphQL schema creator based on model collections in DB and user defined schemas in code
+
+@tds/cms
+UI to create and manage collections and it's content and content types. Depending on types default content can be generated on new entries.
+
+@tds/authentication
+Manage roles and user permissons based on certain authentication strategies
+
 @tds/styleguide
 server, mdx, sandbox, editor, git
 
 - Create a new server (or extend endpoint on existing) serving a documenation of application
 - Identify proptypes, setup playground display documentation
 - Trigger GIT (current branch) Pull Request for changes
+
+@tds/deploy
+git, netlify,
+
+- Build and
