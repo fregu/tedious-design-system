@@ -2,6 +2,7 @@
   "title": "Prototype project",
   "description": "Just playing around",
   "graphql": {
-    "endpoint": "https://api-euwest.graphcms.com/v1/cjng2h1rr1aha01ijg503fnjj/master"
+    "endpoint": "https://api-euwest.graphcms.com/v1/cjng2h1rr1aha01ijg503fnjj/master",
+    "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ2ZXJzaW9uIjoxLCJ0b2tlbklkIjoiYzViMmY1OGMtODg4MC00N2NmLWI3NTgtMGJmNjIyMzdlMDA5In0.ZO9zHkbxQQbT8s56hAuFhHOyIriTVc864_yWWYrWib8"
   }
 }

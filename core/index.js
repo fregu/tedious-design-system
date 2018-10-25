@@ -40,6 +40,10 @@ module.exports = function core(dir) {
     server() {
       server(build(config).config())
       console.log('Starting server');
+    },
+    start() {
+      server(config)
+      console.log('Starting tds server');
     }
   }
 }

@@ -175,9 +175,29 @@ koa, @tds/build, graphql, api, ssl, ws, static
 - setup REST api enpoints
 - serve static assets
 
+@tds/db
+Setup a mongoDB client, with users, assets and collections.
+
+@tds/api
+An API with REST endpoints to control database
+
+@tds/graphql
+GraphQL schema creator based on model collections in DB and user defined schemas in code
+
+@tds/cms
+UI to create and manage collections and it's content and content types. Depending on types default content can be generated on new entries.
+
+@tds/authentication
+Manage roles and user permissons based on certain authentication strategies
+
 @tds/styleguide
 server, mdx, sandbox, editor, git
 
 - Create a new server (or extend endpoint on existing) serving a documenation of application
 - Identify proptypes, setup playground display documentation
 - Trigger GIT (current branch) Pull Request for changes
+
+@tds/deploy
+git, netlify,
+
+- Build and

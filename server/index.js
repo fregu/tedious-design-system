@@ -14,9 +14,8 @@ app.use('/styleguide', styleguide(fileTree))
 
 app.use(webpackDevMiddleware(App.client())
 app.use(App.ssr())
-
-
 **/
+const path = require('path')
 const Koa = require('koa')
 // const https = require('https')
 const cors = require('koa-cors')
@@ -30,17 +29,37 @@ const websockify = require('koa-websocket')
 // const provider = require('@tds/provider')
 // const ssr = require('@tds/app')
 
+const mount = require('koa-mount')
+const serve = require('koa-static')
+const tdsBuild = require('@tds/build')
 const webpack = require('webpack')
 const webpackDevMiddleware = require('koa-webpack-dev-middleware')
 const historyFallback = require('koa2-history-api-fallback')
 
 module.exports = function server(config) {
-  console.log('server', config)
+  const builder = tdsBuild(config)
   //const app = new Koa();
   const app = websockify(new Koa());
   app.use(cors())
   app.use(historyFallback())
-  const compiler = webpack([config.webpack])
+
+  console.log('Building assets')
+  builder.build()
+    .then(() => {
+      console.log('Building server application')
+      return builder.ssr()
+    })
+    .then(ssrMiddleware => {
+      console.log(`App loaded on http://localhost:${config.env.port}`)
+      return app.use(ssrMiddleware)
+    })
+
+
+  app.use(mount('/public', serve(path.resolve(config.path, 'dist'))))
+  // const ssr = require(path.resolve(process.cwd(), 'dist', 'ssr.js'))
+  // app.use(ssr.default)
+
+
 
   // trigger webpack build on each startup
 
@@ -51,9 +70,11 @@ module.exports = function server(config) {
   // }
 
   //if (config.mode === 'development') {
-    app.use(webpackDevMiddleware(compiler))
-    app.use(require("koa-webpack-hot-middleware")(compiler));
+    // const compiler = webpack([config.webpack])
+    // app.use(webpackDevMiddleware(compiler))
+    // app.use(require("koa-webpack-hot-middleware")(compiler));
   //}
+
 
   // app.use('/api', api(config))
   // app.use('/styleguide', styleguide(config))

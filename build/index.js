@@ -21,30 +21,27 @@ Create clietEntryLoader and serverEntryLoader
 const webpack = require('webpack')
 const path = require('path')
 const MemoryFileSystem = require('memory-fs')
+const fs = require('fs')
 const requireFromString = require('require-from-string')
 
 //import {clientAppLoader, serverAppLoader} from '@tds/app'
 
-const webpackConfigPaths = {
-  development: './webpack.dev.js',
-  production: './webpack.prod.js',
-  ssr: './webpack.ssr.js',
-
-}
 module.exports = function build(config) {
+  const webpackConfigs = {
+    development: require('./webpack/webpack.dev.js')(config),
+    production: require('./webpack/webpack.prod.js')(config),
+    ssr: require('./webpack/webpack.ssr.js')(config),
+  }
   const mode = config.mode || 'development'
-  let webpackConfig = require(webpackConfigPaths[mode])
-  const devConfig = {...webpackConfig(config), mode}//, mode, entry: path.resolve(__dirname, 'entries', 'client.js') + '?' + JSON.stringify(config), stats: 'verbose'}
 
-  const compiler = webpack([
-    devConfig
-    //{...webpackConfig['ssr'], entry: './server.js'},
-  ])
-  return {
+
+  const methods = {
     config() {
-      return {...config, webpack: devConfig}
+      return {...config, webpack: webpackConfigs.development}
     },
     devServer() {
+      const devConfig = webpackConfigs.development
+      const compiler = webpack(devConfig)
       const webpackDevServer = require('webpack-dev-server');
       const devServerOptions = Object.assign({}, webpackConfig.devServer, {
         stats: {
@@ -61,42 +58,100 @@ module.exports = function build(config) {
         console.log('Starting server on http://localhost:'+port);
       });
     },
-    memory() {
-      const memoryFs = new MemoryFileSystem()
 
-      // Define file system to be in memory for compiler instead
-      compiler.outputFileSystem = memoryFs
+    ssr(memory) {
+      const ssrConfig = webpackConfigs.ssr
+      const ssrCompiler = webpack(ssrConfig)
+
+      const fileSystem = memory ? new MemoryFileSystem() : fs
+      if (memory) {
+        ssrCompiler.outputFileSystem = fileSystem
+      }
 
       return new Promise((resolve, reject) => {
-        // Start the compiler and require the file from memory
-        compiler.run((err, stats) => {
-          if (err) {
-            console.log('compiler error', err)
-            throw err
-          }
+        ssrCompiler.watch({
+            aggregateTimeout: 300,
+            poll: 1000,
+            ignored: [/node_modules/, /dist/]
+          }, (err, stats) => {
+            if (err) {
+              console.error(err.stack || err);
+              if (err.details) {
+                console.error(err.details);
+              }
+              return;
+            }
 
-          const contents = memoryFs.readFileSync(
-            path.resolve(webpackConfig.output.path || 'dist', ssrConfig.output.filename || 'main.js'),
-            'utf8'
-          )
+            const info = stats.toJson();
 
-          const module = requireFromString(contents, webpackConfig.output.filename || 'main.js')
+            if (stats.hasErrors()) {
+              console.error(info.errors);
+            }
 
-          resolve(module.default || module)
+            if (stats.hasWarnings()) {
+              console.warn(info.warnings);
+            }
+
+            const contents = fileSystem.readFileSync(
+              path.resolve(ssrConfig.output.path || 'dist', ssrConfig.output.filename || 'main.js'),
+              'utf8'
+            )
+
+            const html = fs.readFileSync(
+              path.resolve(ssrConfig.output.path || 'dist', 'template.html'),
+              'utf8'
+            )
+
+            const module = requireFromString(contents, ssrConfig.output.filename)
+
+            resolve(module.default(config, html))
         })
       })
     },
-    build() {
-      compiler.run((err, stats) => {
-        if (err) {
-          console.log('compiler error', err)
-          throw err
-        }
-        console.log('success?', stats.toJson('verbose'))
+
+    build(mode = 'development', memory) {
+      const config = webpackConfigs[mode]
+      const compiler = webpack(config)
+
+      // const fileSystem = memory ? new MemoryFileSystem() : fs
+      // compiler.outputFileSystem = fileSystem
+
+      return new Promise((resolve, reject) => {
+        compiler.watch({
+            aggregateTimeout: 300,
+            poll: 1000,
+            ignored: [/node_modules/, /dist/]
+          }, (err, stats) => {
+            if (err) {
+              console.error(err.stack || err);
+              if (err.details) {
+                console.error(err.details);
+              }
+              return;
+            }
+
+            const info = stats.toJson();
+
+            if (stats.hasErrors()) {
+              console.error('ERRORS:',info.errors);
+            }
+
+            if (stats.hasWarnings()) {
+              console.warn('WARNINGS:', info.warnings);
+            }
+            if (!stats.hasErrors) {
+              console.log('bundle ´finished')
+            }
+
+          resolve()
+        })
       })
     },
-    watch() {},
+    watch() {
+      console.log('watch')
+    },
   }
+  return methods
 
   // if (options.memory) {
     // const memoryFs = new MemoryFileSystem()
